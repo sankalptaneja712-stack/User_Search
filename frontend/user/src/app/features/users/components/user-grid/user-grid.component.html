@@ -1,7 +1,19 @@
 <div class="users-container">
-  <app-search-bar (search)="onSearch($event)"></app-search-bar>
+  <app-search-bar (search)="onSearch($event)" (statusChange)="onSearchStatusChange($event)"></app-search-bar>
 
-  <div class="results-section" *ngIf="filteredUsers?.length">
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-state" *ngIf="error && !loading">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="results-section" *ngIf="filteredUsers?.length && !loading && !error">
     <div class="controls">
       <div class="filter-group">
         <button
@@ -91,7 +103,7 @@
     </div>
   </div>
 
-  <div class="empty-state" *ngIf="searchTriggered && !filteredUsers?.length">
+  <div class="empty-state" *ngIf="searchTriggered && !filteredUsers?.length && !loading && !error">
     <div class="empty-icon">🔍</div>
     <h2>No Users Found</h2>
     <p>Try adjusting your search criteria</p>

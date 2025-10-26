@@ -23,7 +23,7 @@ A full-stack web application for searching and managing user data with a Spring 
 
 ### **Backend**
 - ☕ **Java 17** – Programming language  
-- ⚙️ **Spring Boot 3.x** – Web framework  
+- ⚙️ **Spring Boot 3.5.7** – Web framework  
 - 🗄️ **Spring Data JPA** – Data access layer  
 - 🧠 **H2 Database** – In-memory database for development  
 - 🧩 **Maven 3.9.3** – Build tool  

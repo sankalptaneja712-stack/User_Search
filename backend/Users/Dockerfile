@@ -17,9 +17,9 @@ RUN chmod +x mvnw
 
 # Build the project
 RUN ./mvnw clean package -DskipTests
+# Copy the JAR from target folder
+COPY target/Users-0.0.1-SNAPSHOT.jar Users-0.0.1-SNAPSHOT.jar
 
-# Copy the generated JAR
-COPY target/*.jar Users-0.0.1-SNAPSHOT.jar
 
 # Expose port (Render will use PORT)
 EXPOSE 8080

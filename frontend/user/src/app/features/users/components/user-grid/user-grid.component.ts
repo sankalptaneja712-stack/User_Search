@@ -39,6 +39,8 @@ export class UserGridComponent {
   roleFilter: string = '';
   roles: string[] = [];
   searchTriggered = false;
+  loading = false;
+  error = '';
 
   hasActiveFilters(): boolean {
     return this.roleFilter !== '' || this.sortDirection !== 'none';
@@ -61,11 +63,31 @@ export class UserGridComponent {
 
   onSearch(query: string) {
     this.searchTriggered = true;
-    this.userService.searchUsers(query).subscribe(users => {
-      this.users = users;
-      this.roles = Array.from(new Set(this.users.map(u => u.role).filter(Boolean))) as string[];
-      this.applyFilters();
+    this.loading = true;
+    this.error = '';
+    
+    this.userService.searchUsers(query).subscribe({
+      next: (users) => {
+        this.users = users;
+        this.roles = Array.from(new Set(this.users.map(u => u.role).filter(Boolean))) as string[];
+        this.applyFilters();
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Search error:', err);
+        this.error = 'Failed to search users. Please try again.';
+        this.loading = false;
+        this.users = [];
+        this.filteredUsers = [];
+      }
     });
+  }
+
+  onSearchStatusChange(status: { isLoading: boolean; error?: string }) {
+    // Sync loading state with search bar if needed
+    if (status.error) {
+      this.error = status.error;
+    }
   }
 
   applyFilters() {

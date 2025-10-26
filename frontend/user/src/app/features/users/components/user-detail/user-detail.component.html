@@ -1,0 +1,158 @@
+<div class="user-detail-container">
+  <button mat-raised-button color="primary" (click)="goBack()" class="back-btn">
+    <span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+      </svg>
+    </span>
+  </button>
+
+  <mat-card *ngIf="user" class="detail-card">
+    <mat-card-header>
+      <div class="header-content">
+        <img [src]="user.image" alt="User photo" class="user-photo" />
+        <div class="header-info">
+          <mat-card-title>{{ user.firstName }} {{ user.lastName }}</mat-card-title>
+          <mat-card-subtitle>{{ user.email }}</mat-card-subtitle>
+          <div class="role-badge" [class]="'role-' + user.role.toLowerCase()">
+            {{ user.role }}
+          </div>
+        </div>
+      </div>
+    </mat-card-header>
+
+    <mat-divider></mat-divider>
+
+    <mat-card-content>
+      <div class="details-grid">
+        <div class="detail-section">
+          <h3>Personal Information</h3>
+          <div class="detail-item">
+            <strong>ID:</strong> {{ user.id }}
+          </div>
+          <div class="detail-item">
+            <strong>Username:</strong> {{ user.username }}
+          </div>
+          <div class="detail-item">
+            <strong>Gender:</strong> {{ user.gender }}
+          </div>
+          <div class="detail-item">
+            <strong>Age:</strong> {{ user.age }} years
+          </div>
+          <div class="detail-item">
+            <strong>Birth Date:</strong> {{ user.birthDate }}
+          </div>
+          <div class="detail-item">
+            <strong>Phone:</strong> {{ user.phone }}
+          </div>
+          <div class="detail-item">
+            <strong>SSN:</strong> {{ user.ssn }}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Physical Attributes</h3>
+          <div class="detail-item">
+            <strong>Height:</strong> {{ user.height }} cm
+          </div>
+          <div class="detail-item">
+            <strong>Weight:</strong> {{ user.weight }} kg
+          </div>
+          <div class="detail-item">
+            <strong>Eye Color:</strong> {{ user.eyeColor }}
+          </div>
+          <div class="detail-item">
+            <strong>Blood Group:</strong> {{ user.bloodGroup }}
+          </div>
+          <div class="detail-item" *ngIf="user.hair">
+            <strong>Hair:</strong> {{ user.hair.color }}, {{ user.hair.type }}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Education & Work</h3>
+          <div class="detail-item">
+            <strong>University:</strong> {{ user.university }}
+          </div>
+          <div class="detail-item" *ngIf="user.company">
+            <strong>Company:</strong> {{ user.company.name }}
+          </div>
+          <div class="detail-item" *ngIf="user.company">
+            <strong>Position:</strong> {{ user.company.title }}
+          </div>
+          <div class="detail-item" *ngIf="user.company">
+            <strong>Department:</strong> {{ user.company.department }}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Address</h3>
+          <div class="detail-item" *ngIf="user.address">
+            <strong>Street:</strong> {{ user.address.address }}
+          </div>
+          <div class="detail-item" *ngIf="user.address">
+            <strong>City:</strong> {{ user.address.city }}
+          </div>
+          <div class="detail-item" *ngIf="user.address">
+            <strong>State:</strong> {{ user.address.state }} ({{ user.address.stateCode }})
+          </div>
+          <div class="detail-item" *ngIf="user.address">
+            <strong>Postal Code:</strong> {{ user.address.postalCode }}
+          </div>
+          <div class="detail-item" *ngIf="user.address">
+            <strong>Country:</strong> {{ user.address.country }}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Banking Information</h3>
+          <div class="detail-item" *ngIf="user.bank">
+            <strong>Card Type:</strong> {{ user.bank.cardType }}
+          </div>
+          <div class="detail-item" *ngIf="user.bank">
+            <strong>Card Number:</strong> {{ user.bank.cardNumber }}
+          </div>
+          <div class="detail-item" *ngIf="user.bank">
+            <strong>Expiry:</strong> {{ user.bank.cardExpire }}
+          </div>
+          <div class="detail-item" *ngIf="user.bank">
+            <strong>Currency:</strong> {{ user.bank.currency }}
+          </div>
+          <div class="detail-item" *ngIf="user.bank">
+            <strong>IBAN:</strong> {{ user.bank.iban }}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Cryptocurrency</h3>
+          <div class="detail-item" *ngIf="user.crypto">
+            <strong>Coin:</strong> {{ user.crypto.coin }}
+          </div>
+          <div class="detail-item" *ngIf="user.crypto">
+            <strong>Network:</strong> {{ user.crypto.network }}
+          </div>
+          <div class="detail-item" *ngIf="user.crypto">
+            <strong>Wallet:</strong> {{ user.crypto.wallet }}
+          </div>
+        </div>
+
+        <div class="detail-section">
+          <h3>Technical Details</h3>
+          <div class="detail-item">
+            <strong>IP Address:</strong> {{ user.ip }}
+          </div>
+          <div class="detail-item">
+            <strong>MAC Address:</strong> {{ user.macAddress }}
+          </div>
+          <div class="detail-item">
+            <strong>EIN:</strong> {{ user.ein }}
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="!user" class="loading">
+    <p>Loading user details...</p>
+  </div>
+</div>

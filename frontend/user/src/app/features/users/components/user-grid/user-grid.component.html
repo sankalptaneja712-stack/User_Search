@@ -1,0 +1,101 @@
+<div class="users-container">
+  <app-search-bar (search)="onSearch($event)"></app-search-bar>
+
+  <div class="results-section" *ngIf="filteredUsers?.length">
+    <div class="controls">
+      <div class="filter-group">
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="filterMenu"
+          class="filter-button"
+          [class.active]="hasActiveFilters()"
+          aria-label="Filter"
+        >
+          <span style="display: flex; align-items: center; justify-content: center; width: 24px; height: 24px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 5h18M6 10h12M10 15h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Menu -->
+    <mat-menu #filterMenu="matMenu" class="filter-menu">
+      <div class="menu-section" (click)="$event.stopPropagation()">
+        <div class="menu-title">Filter by Role</div>
+        <mat-divider></mat-divider>
+        <div class="filter-options">
+          <mat-chip-listbox [value]="roleFilter" (change)="setRoleFilter($event.value)">
+            <mat-chip-option value="">All</mat-chip-option>
+            <mat-chip-option *ngFor="let r of roles" [value]="r">
+              {{ r }}
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <div class="menu-section" (click)="$event.stopPropagation()">
+        <div class="menu-title">Sort by Age</div>
+        <mat-divider></mat-divider>
+        <div class="filter-options">
+          <mat-chip-listbox [value]="sortDirection" (change)="setSortDirection($event.value)">
+            <mat-chip-option value="none">None</mat-chip-option>
+            <mat-chip-option value="asc">
+              Ascending
+            </mat-chip-option>
+            <mat-chip-option value="desc">
+              Descending
+            </mat-chip-option>
+          </mat-chip-listbox>
+        </div>
+      </div>
+    </mat-menu>
+
+    <!-- User Grid -->
+    <div class="user-grid">
+  <mat-card class="user-card" *ngFor="let user of filteredUsers" (click)="onSelectUser(user)" style="cursor:pointer;">
+        <mat-card-header>
+          <div mat-card-avatar class="user-avatar" [style.background-image]="'url(' + user.image + ')'"></div>
+          <mat-card-title>{{ user.firstName }} {{ user.lastName }}</mat-card-title>
+          <mat-card-subtitle>ID: {{ user.id }}</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <div class="user-details">
+            <mat-chip-listbox>
+              <mat-chip [class]="'role-chip-' + user.role.toLowerCase()">
+                {{ user.role }}
+              </mat-chip>
+              <mat-chip>{{ user.age }} years</mat-chip>
+            </mat-chip-listbox>
+            
+            <mat-divider class="divider"></mat-divider>
+            
+            <div class="detail-row">
+              <strong>SSN:</strong> {{ user.ssn }}
+            </div>
+            
+            <div class="company-info">
+              <strong>Company:</strong> {{ user.company?.name }}
+              <div class="company-details">
+                <small>{{ user.company?.title }}</small>
+                <small>{{ user.company?.department }}</small>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="searchTriggered && !filteredUsers?.length">
+    <div class="empty-icon">🔍</div>
+    <h2>No Users Found</h2>
+    <p>Try adjusting your search criteria</p>
+  </div>
+</div>
+
+

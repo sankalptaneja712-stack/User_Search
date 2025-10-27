@@ -29,11 +29,20 @@ export class UserService {
     );
   }
 
-  private handleError(error: HttpErrorResponse) {
+  private handleError(error: unknown) {
+    // If the global HTTP interceptor already normalized the error to an Error instance,
+    // preserve its message and rethrow without remapping.
+    if (error instanceof Error && !(error as any)?.status) {
+      console.error('UserService Error:', error.message);
+      return throwError(() => error);
+    }
+
+    const httpError = error as HttpErrorResponse;
+
     // Prefer backend ApiError.message if present, else fall back to status-specific messages
     let errorMessage = 'An error occurred. Please try again later.';
 
-    const data = error.error as any;
+    const data = httpError?.error as any;
     if (data) {
       if (typeof data === 'string') {
         errorMessage = data;
@@ -42,10 +51,10 @@ export class UserService {
       }
     }
     if (!data || !data.message) {
-      if (error.status === 0) errorMessage = 'Network error. Please check your internet connection.';
-      else if (error.status === 400) errorMessage = 'Invalid request. Please check your input.';
-      else if (error.status === 404) errorMessage = 'Resource not found.';
-      else if (error.status >= 500) errorMessage = 'Server error. Please try again later.';
+      if (httpError?.status === 0) errorMessage = 'Network error. Please check your internet connection.';
+      else if (httpError?.status === 400) errorMessage = 'Invalid request. Please check your input.';
+      else if (httpError?.status === 404) errorMessage = 'Resource not found.';
+      else if ((httpError?.status ?? 0) >= 500) errorMessage = 'Server error. Please try again later.';
     }
 
     console.error('UserService Error:', errorMessage);

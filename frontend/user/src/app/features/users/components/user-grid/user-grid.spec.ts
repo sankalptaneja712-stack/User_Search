@@ -4,22 +4,60 @@ import { UserGridComponent } from './user-grid.component';
 import { UserService } from '../../../../core/services/user.service';
 import { User } from '../../models/user.model';
 
+function makeUser(overrides: Partial<User>): User {
+  const base: User = {
+    id: 0,
+    firstName: '',
+    lastName: '',
+    age: 0,
+    gender: '',
+    email: '',
+    phone: '',
+    username: '',
+    password: '',
+    birthDate: '',
+    image: '',
+    bloodGroup: '',
+    height: 0,
+    weight: 0,
+    eyeColor: '',
+    ip: '',
+    macAddress: '',
+    university: '',
+    ein: '',
+    ssn: '',
+    userAgent: '',
+    role: '',
+    address: {
+      address: '', city: '', state: '', stateCode: '', postalCode: '', country: '',
+      coordinates: { lat: 0, lng: 0 }
+    },
+    bank: { cardExpire: '', cardNumber: '', cardType: '', currency: '', iban: '' },
+    company: {
+      department: '', name: '', title: '',
+      address: { address: '', city: '', state: '', stateCode: '', postalCode: '', country: '', coordinates: { lat: 0, lng: 0 } }
+    },
+    crypto: { coin: '', wallet: '', network: '' },
+  };
+  return { ...base, ...overrides } as User;
+}
+
 describe('UserGridComponent', () => {
   let component: UserGridComponent;
   let fixture: ComponentFixture<UserGridComponent>;
   let mockUserService: jasmine.SpyObj<UserService>;
 
   const mockUsers: User[] = [
-    { id: 1, firstName: 'John', lastName: 'Doe', ssn: '123-45-6789', age: 30, role: 'Admin' },
-    { id: 2, firstName: 'Jane', lastName: 'Smith', ssn: '987-65-4321', age: 25, role: 'User' },
-    { id: 3, firstName: 'Bob', lastName: 'Brown', ssn: '111-22-3333', age: 40, role: 'Admin' }
+    makeUser({ id: 1, firstName: 'John', lastName: 'Doe', ssn: '123-45-6789', age: 30, role: 'Admin' }),
+    makeUser({ id: 2, firstName: 'Jane', lastName: 'Smith', ssn: '987-65-4321', age: 25, role: 'User' }),
+    makeUser({ id: 3, firstName: 'Bob', lastName: 'Brown', ssn: '111-22-3333', age: 40, role: 'Admin' })
   ];
 
   beforeEach(async () => {
     mockUserService = jasmine.createSpyObj('UserService', ['searchUsers']);
 
     await TestBed.configureTestingModule({
-      declarations: [UserGridComponent],
+      imports: [UserGridComponent],
       providers: [{ provide: UserService, useValue: mockUserService }]
     }).compileComponents();
   });

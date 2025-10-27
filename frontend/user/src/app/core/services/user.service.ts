@@ -30,16 +30,24 @@ export class UserService {
   }
 
   private handleError(error: HttpErrorResponse) {
+    // Prefer backend ApiError.message if present, else fall back to status-specific messages
     let errorMessage = 'An error occurred. Please try again later.';
-    
-    if (error.error instanceof ErrorEvent) {
-      // Client-side error
-      errorMessage = error.error.message;
-    } else {
-      // Server-side error
-      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+
+    const data = error.error as any;
+    if (data) {
+      if (typeof data === 'string') {
+        errorMessage = data;
+      } else if (typeof data === 'object') {
+        errorMessage = data.message || data.error || errorMessage;
+      }
     }
-    
+    if (!data || !data.message) {
+      if (error.status === 0) errorMessage = 'Network error. Please check your internet connection.';
+      else if (error.status === 400) errorMessage = 'Invalid request. Please check your input.';
+      else if (error.status === 404) errorMessage = 'Resource not found.';
+      else if (error.status >= 500) errorMessage = 'Server error. Please try again later.';
+    }
+
     console.error('UserService Error:', errorMessage);
     return throwError(() => new Error(errorMessage));
   }

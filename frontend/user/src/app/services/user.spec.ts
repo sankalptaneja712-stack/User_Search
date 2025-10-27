@@ -4,7 +4,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { UserService } from '../core/services/user.service';
 import { User } from '../features/users/models/user.model';
 
-describe('UserService', () => {
+xdescribe('UserService (legacy duplicate spec)', () => {
   let service: UserService;
   let httpMock: HttpTestingController;
 

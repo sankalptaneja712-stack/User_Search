@@ -6,7 +6,6 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
-import { SharedModule } from '../../shared/shared.module';
 
 @NgModule({
   imports: [
@@ -16,8 +15,7 @@ import { SharedModule } from '../../shared/shared.module';
     MatCardModule,
     MatIconModule,
     MatChipsModule,
-    MatDividerModule,
-    SharedModule
+    MatDividerModule
   ]
 })
 export class UsersModule {}

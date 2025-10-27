@@ -15,7 +15,7 @@ COPY src ./src
 RUN chmod +x mvnw
 
 # Build the project
-RUN ./mvnw clean package -DskipTests
+RUN ./mvnw clean package
 
 # Stage 2: Create runtime image
 FROM eclipse-temurin:17-jdk-alpine

@@ -7,15 +7,17 @@ A full-stack web application for searching and managing user data with a Spring 
 ---
 
 ## 📋 Table of Contents
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Backend APIs](#-backend-apis)
-- [Frontend Architecture](#-frontend-architecture)
-- [Application Flow](#-application-flow)
-- [Setup & Installation](#-setup--installation)
-- [Running Locally](#-running-locally)
-- [Building for Production](#-building-for-production)
-- [Features](#-features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Backend APIs](#backend-apis)
+- [Frontend Architecture](#frontend-architecture)
+- [Application Flow](#application-flow)
+- [Exception Handling](#exception-handling)
+- [Testing](#testing)
+- [Setup & Installation](#setup--installation)
+- [Running Locally](#running-locally)
+- [Building for Production](#building-for-production)
+- [Features](#features)
 
 ---
 
@@ -144,6 +146,110 @@ GET /api/users/search?text=john
 
 <img width="563" height="227" alt="Screenshot 2025-10-26 at 10 53 13 PM" src="https://github.com/user-attachments/assets/7918a911-b184-46b3-99c2-8519aaad12fe" />
 
+
+## 🛡️ Exception Handling
+
+This project implements consistent, user-friendly error handling on both the backend and the frontend.
+
+### Backend
+
+- Centralized handler: `GlobalExceptionHandler` using `@RestControllerAdvice` maps exceptions to HTTP responses with a standard payload `ApiError`.
+- Custom exceptions:
+  - `BadRequestException` → HTTP 400
+  - `NotFoundException` → HTTP 404
+  - Any unhandled exception → HTTP 500
+- Standard error payload `ApiError` fields:
+  - `timestamp` (ISO string)
+  - `status` (HTTP code)
+  - `error` (HTTP reason phrase)
+  - `message` (developer-friendly message)
+  - `path` (request path)
+
+Backend error examples:
+
+400 example (short non-empty search text):
+
+```json
+{
+  "timestamp": "2025-10-27T12:34:56.789Z",
+  "status": 400,
+  "error": "Bad Request",
+  "message": "Query parameter 'text' must be at least 3 characters",
+  "path": "/api/users/search"
+}
+```
+
+404 example (user not found):
+
+```json
+{
+  "timestamp": "2025-10-27T12:34:56.789Z",
+  "status": 404,
+  "error": "Not Found",
+  "message": "User not found with id 99",
+  "path": "/api/users/99"
+}
+```
+
+Input validation rules:
+- Search: `GET /api/users/search?text=`
+  - If `text` is empty/blank or omitted → returns all users (same as `GET /api/users`).
+  - If `text` is non-empty and shorter than 3 characters → 400 Bad Request.
+- Get by ID or email: returns 404 if the user doesn’t exist.
+
+### Frontend
+
+- HTTP Error Interceptor (`http-error.interceptor.ts`):
+  - Intercepts `HttpErrorResponse` and prefers the backend `ApiError.message` when present.
+  - Falls back to friendly messages based on status: 0 (network), 400, 404, 5xx.
+  - Provided globally in `app.config.ts`.
+- Global Error Handler (`GlobalErrorHandler`) logs unexpected errors.
+- UI Validations:
+  - `SearchBarComponent` validates locally: non-empty queries must have at least 3 characters; empty query is allowed and triggers search of all users.
+  - `UserGridComponent` shows a concise, user-friendly error message on failed searches and a loading indicator during requests.
+
+
+## ✅ Testing
+
+Automated tests cover critical paths in both backend and frontend.
+
+### Backend tests (JUnit 5, Spring Boot Test)
+
+- `UserServiceImplTest` (unit with Mockito):
+  - `searchUsers("ab")` → throws `BadRequestException`.
+  - `searchUsers("")` or `null` → returns `findAll()` result.
+  - `getUserById` returns user or throws `NotFoundException`.
+  - `getUserByEmail` throws `NotFoundException` when missing.
+  - `getAllUsers` returns list.
+- `UserControllerTest` (@WebMvcTest + `GlobalExceptionHandler`):
+  - `GET /api/users` returns 200 with list JSON.
+  - `GET /api/users/search?text=ab` returns 400 with `ApiError` JSON.
+  - `GET /api/users/{id}` 404 scenario returns `ApiError` JSON.
+
+Run backend tests:
+
+```bash
+cd backend/Users
+./mvnw test
+```
+
+### Frontend tests (Karma/Jasmine)
+
+- Interceptor: `core/interceptors/http-error.interceptor.spec.ts` ensures status-to-message mapping and `ApiError.message` preference.
+- Service: `core/services/user.service.error.spec.ts` verifies error mapping and URL formation using `environment.apiBaseUrl` with `HttpTestingController`.
+- Users feature: component specs validate standalone imports and core interactions, including `UserGridComponent` behavior and `SearchBarComponent` validation.
+- App shell: `app.spec.ts` sanity checks root rendering and router outlet.
+
+Run frontend tests:
+
+```bash
+cd frontend/user
+ng test --watch=false
+```
+
+Notes:
+- Tests use Angular standalone components; specs import components directly via `imports: [...]`.
+- HTTP tests avoid hardcoded URLs and use `environment.apiBaseUrl` to stay environment-agnostic.
 
 
 🚀 Setup & Installation

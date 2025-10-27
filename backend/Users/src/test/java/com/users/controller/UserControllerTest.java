@@ -37,49 +37,49 @@ class UserControllerTest {
     private UserService userService;
 
     @Test
-    @DisplayName("GET /api/users returns 200 with list")
+    @DisplayName("GET /api/v1/users returns 200 with list")
     void getAll_returnsOk() throws Exception {
         User u = new User();
         u.setId(1L);
         when(userService.getAllUsers()).thenReturn(List.of(u));
 
-        mockMvc.perform(get("/api/users").accept(MediaType.APPLICATION_JSON))
+    mockMvc.perform(get("/api/v1/users").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].id").value(1));
     }
 
     @Test
-    @DisplayName("GET /api/users/search with short text returns 400 ApiError")
+    @DisplayName("GET /api/v1/users/search with short text returns 400 ApiError")
     void search_shortText_returnsBadRequest() throws Exception {
         when(userService.searchUsers(anyString())).thenThrow(new BadRequestException("Query parameter 'text' must be at least 3 characters"));
 
-        mockMvc.perform(get("/api/users/search").param("text", "ab"))
+        mockMvc.perform(get("/api/v1/users/search").param("text", "ab"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.message").value("Query parameter 'text' must be at least 3 characters"))
-                .andExpect(jsonPath("$.path").value("/api/users/search"));
+                .andExpect(jsonPath("$.path").value("/api/v1/users/search"));
     }
 
     @Test
-    @DisplayName("GET /api/users/{id} not found returns 404 ApiError")
+    @DisplayName("GET /api/v1/users/{id} not found returns 404 ApiError")
     void getById_notFound_returns404() throws Exception {
         when(userService.getUserById(anyLong())).thenThrow(new NotFoundException("User not found with id 99"));
 
-        mockMvc.perform(get("/api/users/99"))
+        mockMvc.perform(get("/api/v1/users/99"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.message").value("User not found with id 99"));
     }
 
     @Test
-    @DisplayName("GET /api/users/{id} returns 200 with user")
+    @DisplayName("GET /api/v1/users/{id} returns 200 with user")
     void getById_returnsUser() throws Exception {
         User u = new User();
         u.setId(7L);
         when(userService.getUserById(7L)).thenReturn(u);
 
-        mockMvc.perform(get("/api/users/7"))
+        mockMvc.perform(get("/api/v1/users/7"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(7));
     }

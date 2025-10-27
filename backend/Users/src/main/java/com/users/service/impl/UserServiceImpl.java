@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
             return userRepository.findAll();
         }
 
-        // For very short non-empty queries, enforce minimum length to avoid heavy scans
+        // For very short non-empty queries, enforce minimum length 
         if (text.trim().length() < 3) {
             throw new BadRequestException("Query parameter 'text' must be at least 3 characters");
         }

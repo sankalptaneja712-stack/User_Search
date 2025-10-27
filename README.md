@@ -55,18 +55,18 @@ A full-stack web application for searching and managing user data with a Spring 
 
 ## 🔗 Backend APIs
 
-### **User Controller (`/api/users`)**
+### **User Controller (`/api/v1/users`)**
 
 | Method | Endpoint | Description | Parameters |
 |--------|-----------|-------------|-------------|
-| **GET** | `/api/users` | Get all users | None |
-| **GET** | `/api/users/search` | Search users by text | `text` (query param) |
-| **GET** | `/api/users/{id}` | Get user by ID | `id` (path param) |
-| **GET** | `/api/users/email/{email}` | Get user by email | `email` (path param) |
+| **GET** | `/api/v1/users` | Get all users | None |
+| **GET** | `/api/v1/users/search` | Search users by text | `text` (query param) |
+| **GET** | `/api/v1/users/{id}` | Get user by ID | `id` (path param) |
+| **GET** | `/api/v1/users/email/{email}` | Get user by email | `email` (path param) |
 
 ### **API Details**
 #### 🔍 Search Users
-GET /api/users/search?text=john
+GET /api/v1/users/search?text=john
 - Searches through **firstName**, **lastName**, and **ssn** fields  
 - Case-insensitive partial matching  
 - Returns an array of matching user objects  
@@ -192,7 +192,7 @@ Backend error examples:
 ```
 
 Input validation rules:
-- Search: `GET /api/users/search?text=`
+- Search: `GET /api/v1/users/search?text=`
   - If `text` is empty/blank or omitted → returns all users (same as `GET /api/users`).
   - If `text` is non-empty and shorter than 3 characters → 400 Bad Request.
 - Get by ID or email: returns 404 if the user doesn’t exist.
@@ -222,9 +222,9 @@ Automated tests cover critical paths in both backend and frontend.
   - `getUserByEmail` throws `NotFoundException` when missing.
   - `getAllUsers` returns list.
 - `UserControllerTest` (@WebMvcTest + `GlobalExceptionHandler`):
-  - `GET /api/users` returns 200 with list JSON.
-  - `GET /api/users/search?text=ab` returns 400 with `ApiError` JSON.
-  - `GET /api/users/{id}` 404 scenario returns `ApiError` JSON.
+  - `GET /api/v1/users` returns 200 with list JSON.
+  - `GET /api/v1/users/search?text=ab` returns 400 with `ApiError` JSON.
+  - `GET /api/v1/users/{id}` 404 scenario returns `ApiError` JSON.
 
 Run backend tests:
 
@@ -279,7 +279,7 @@ cd backend/Users
 ./mvnw spring-boot:run
 
 * Server runs on: http://localhost:8080
-* API base URL: http://localhost:8080/api
+* API base URL: http://localhost:8080/api/v1
 * H2 Console: http://localhost:8080/h2-console
 
 Start Frontend Development Server
@@ -316,7 +316,7 @@ ng build --configuration production
 Environment Configuration
 The application uses different API endpoints for development and production:
 * Development: http://localhost:8080/api
-* Production: https://user-search-1.onrender.com/api
+* Production: https://user-search-1.onrender.com/api/v1
 
 Environment files:
 * environment.ts - Development
